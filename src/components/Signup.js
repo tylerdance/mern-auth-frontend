@@ -1,38 +1,38 @@
-require('dotenv').config()
+// Imports
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router-dom'
-
+import { Redirect } from 'react-router-dom';
 const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
-function Signup() {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [redirect, setRedirect] = useState(false)
+const Signup = () => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [redirect, setRedirect] = useState(false);
 
-    function handleName(e) {
+    const handleName = (e) => {
         setName(e.target.value);
     }
 
-    function handleEmail(e) {
+    const handleEmail = (e) => {
         setEmail(e.target.value);
     }
 
-    function handlePassword(e) {
+    const handlePassword = (e) => {
         setPassword(e.target.value);
     }
 
-    function handleConfirmPassword(e) {
+    const handleConfirmPassword = (e) => {
         setConfirmPassword(e.target.value);
     }
 
-    function handleSubmit(e) {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        if (password === confirmPassword) {
-            const newUser = { name, email, password }
 
+        if (password === confirmPassword) {
+            const newUser = { name, email, password };
+            
             axios.post(`${REACT_APP_SERVER_URL}/api/users/register`, newUser)
             .then(response => {
                 console.log(response);
@@ -44,13 +44,13 @@ function Signup() {
         }
     }
 
-    if (redirect) return <Redirect to="/login" />
+    if (redirect) return <Redirect to='/login' />
 
-    return(
+    return (
         <div className="row mt-4">
-            <div className="col-md-7 off">
+            <div className="col-md-7 offset-md-3">
                 <div className="card card-body">
-                    <h2 className="py-2">Sign up</h2>
+                    <h2 className="py-2">Signup</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="name">Name</label>
@@ -62,12 +62,13 @@ function Signup() {
                         </div>
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
-                            <input type="text" name="password" value={password} onChange={handlePassword} className="form-control" />
+                            <input type="password" name="password" value={password} onChange={handlePassword} className="form-control" />
                         </div>
                         <div className="form-group">
                             <label htmlFor="confirmPassword">Confirm Password</label>
-                            <input type="text" name="confirmPassword" value={confirmPassword} onChange={handleConfirmPassword} className="form-control" />
+                            <input type="password" name="confirmPassword" value={confirmPassword} onChange={handleConfirmPassword} className="form-control" />
                         </div>
+                        <button type="submit" className="btn btn-primary float-right">Submit</button>
                     </form>
                 </div>
             </div>

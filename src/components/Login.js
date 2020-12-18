@@ -1,36 +1,51 @@
-require('dotenv').config()
-import React, { useState, useEffect } from 'react';
+// Imports
+import React, { useState } from 'react';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode'
-import setAuthToken from '../utils/setAuthToken'
-import { Redirect } from 'react-router-dom'
-
+import jwt_decode from 'jwt-decode';
+import setAuthToken from '../utils/setAuthToken';
+import { Redirect } from 'react-router-dom';
 const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
-function Login(props) {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+const Login = (props) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    function handleEmail(e) {
+    const handleEmail = (e) => {
         setEmail(e.target.value);
     }
 
-    function handlePassword(e) {
+    const handlePassword = (e) => {
         setPassword(e.target.value);
     }
 
-    function handleSubmit(e) {
+    const handleSubmit = (e) => {
         e.preventDefault();
+        const userData = { email, password };
 
+        axios.post(`${REACT_APP_SERVER_URL}/api/users/login`, userData)
+        .then(response => {
+            const { token } = response.data;
+            // Save token to localStorage
+            localStorage.setItem('jwtToken', token);
+            // Set token to auth header
+            setAuthToken(token);
+            // Decode token to get the user data
+            const decoded = jwt_decode(token);
+            // Set current user
+            props.nowCurrentUser(decoded);
+        })
+        .catch(error =>{
+            console.log(error);
+        })
     }
 
-    if (props.user) return <Redirect to="/profile" />
+    if (props.user) return <Redirect to='/profile' />
 
-    return(
+    return (
         <div className="row mt-4">
-            <div className="col-md-7 off">
+            <div className="col-md-7 offset-md-3">
                 <div className="card card-body">
-                    <h2 className="py-2">Log In</h2>
+                    <h2 className="py-2">Login</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="email">Email</label>
@@ -38,9 +53,9 @@ function Login(props) {
                         </div>
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
-                            <input type="text" name="password" value={password} onChange={handlePassword} className="form-control" />
+                            <input type="password" name="password" value={password} onChange={handlePassword} className="form-control" />
                         </div>
-                        <button type="submit" className="btn btn-primary float-right" onClick={handleSubmit}>Log In</button>
+                        <button type="submit" className="btn btn-primary float-right">Submit</button>
                     </form>
                 </div>
             </div>
